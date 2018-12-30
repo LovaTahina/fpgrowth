@@ -34,9 +34,9 @@ struct Node
         //cout << " + " << _itemValue << " (" << _order << ")" << endl;
 	}
 
-	bool operator ==(Node const& p_node) const
+    bool operator ==(Node const& p_node) const
 	{
-		return _itemValue == p_node._itemValue;
+        return _itemValue == p_node._itemValue;
 	}		
 };
 
@@ -48,7 +48,7 @@ struct Node
 template<typename T>
 struct Comparator
 {
-	bool operator()(Node<T> const& p_left, Node<T> const& p_right)
+    bool operator()(Node<T> const& p_left, Node<T> const& p_right)
 	{
         return (p_left._freq > p_right._freq) ||
         (p_left._freq == p_right._freq && p_left._order < p_right._order);
@@ -110,23 +110,23 @@ struct ItemSupport
 	{
         OrderedItems<T> itemset = p_itemSupport.getFrequentItems();
 		
-		for(Node<T> node: itemset)
+        for(Node<T> node: itemset)
 		{
             p_os << node._itemValue << ": support " << node._freq << ", order " << node._order << endl;
 		}
 		return p_os;
 	}
 	
-	Node<T>* getItem(T const& p_itemValue)
+    Node<T>* getItem(T const& p_itemValue)
 	{
         auto inode = find_if(_itemList.begin(), _itemList.end(), [&p_itemValue](Node<T> const& p_node)
         {
             return p_node._itemValue == p_itemValue;
         });
-		if(inode != _itemList.end())
+        if(inode != _itemList.end())
 		{
-			Node<T>* node = const_cast<Node<T>*>(&(*inode));
-			return node;
+            Node<T>* node = const_cast<Node<T>*>(&(*inode));
+            return node;
 		}
 		
 		return nullptr;
@@ -151,10 +151,10 @@ private:
     OrderedItems<T> getFrequentItems() const
 	{
         OrderedItems<T> ordered;
-		for(Node<T> const& node: _itemList)
+        for(Node<T> const& node: _itemList)
 		{
             if(node._freq >= ItemSupport<T>::_minSup)
-				ordered.insert(node);
+                ordered.insert(node);
 		}
 		
 		return ordered;
@@ -163,10 +163,10 @@ private:
     OrderedItems<T> getUnfrequentItems() const
 	{
         OrderedItems<T> ordered;
-		for(Node<T> const& node: _itemList)
+        for(Node<T> const& node: _itemList)
 		{
             if(node._freq <= ItemSupport<T>::_minSup)
-				ordered.insert(node);
+                ordered.insert(node);
 		}
 		
 		return ordered;
@@ -203,38 +203,38 @@ struct FP_Tree
         cout << "(ordered) ";
         for(Node<T> const& node: ordered)
 		{
-			cout << node._itemValue << " ";
+            cout << node._itemValue << " ";
 		}
 		cout << endl;
 
 		// B. Create FP_TREE
-		Node<T>* actualNode = _root;
+        Node<T>* actualNode = _root;
 		bool here = true;
 		string tab;
         for(Node<T> const& node: ordered)
 		{
 			tab += "\t-";
 			
-			auto it = actualNode->_children.begin();
+            auto it = actualNode->_children.begin();
 			if(here)
 			{
-				it = find_if(actualNode->_children.begin(),
-				actualNode->_children.end(), [&node](const Node<T>* nodeTmp){
-					return node == (*nodeTmp);
+                it = find_if(actualNode->_children.begin(),
+                actualNode->_children.end(), [&node](const Node<T>* nodeTmp){
+                    return node == (*nodeTmp);
 				});
 				
-				here &= it != actualNode->_children.end();
+                here &= it != actualNode->_children.end();
 			}
 
 			if(here)
 			{
-				actualNode = *it;
+                actualNode = *it;
                 ++actualNode->_freq;
             }
 			else
 			{
-				Node<T>* pNode = new Node<T>(node._itemValue);
-				actualNode->_children.push_back(pNode);
+                Node<T>* pNode = new Node<T>(node._itemValue);
+                actualNode->_children.push_back(pNode);
 
                 pNode->_parent = actualNode;
                 Node<T> *pNodeHead = _headItemSupport.getItem(node._itemValue);
@@ -306,7 +306,7 @@ struct FP_Tree
 
 private:
     ItemSupport<T>& _headItemSupport;
-	Node<T>* _root;
+    Node<T>* _root;
 };
 
 #endif

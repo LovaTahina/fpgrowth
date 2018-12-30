@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "fp_tree.h"
+#include "fptree_headeronly.h"
 
 using namespace std;
 
