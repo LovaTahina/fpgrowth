@@ -1,5 +1,5 @@
-#ifndef _document_term_matrix_fp_tree_h_
-#define _document_term_matrix_fp_tree_h_
+#ifndef _fpgrowth_header_only_h_
+#define _fpgrowth_header_only_h_
 
 #include <iostream>
 #include <vector>
