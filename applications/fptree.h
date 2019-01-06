@@ -93,7 +93,8 @@ struct ItemSupport
         if(inode == _itemList.end())
         {
             Node<T> node(p_itemValue, order);
-            _itemList.push_back(node);            
+            _itemList.push_back(node);
+            cout << p_itemValue << " : order " << order << endl;
             ++order;
         }
 		else
@@ -187,14 +188,24 @@ struct FP_Tree
 	{
 		// A. Order items into transaction
         OrderedItems<T> ordered;
+        cout << "(transaction) ";
 		for(T const& itemValue: p_itemValues)
 		{
+			cout << itemValue << " ";
             Node<T> *pNode = _headItemSupport.getItem(itemValue);
             if(pNode && pNode->_freq >= ItemSupport<T>::getMinSup())
             {
                 ordered.insert((*pNode));
             }
 		}
+		cout << endl;
+
+        cout << "(ordered) ";
+        for(Node<T> const& node: ordered)
+		{
+            cout << node._itemValue << " ";
+		}
+		cout << endl;
 
 		// B. Create FP_TREE
         Node<T>* actualNode = _root;
@@ -234,19 +245,63 @@ struct FP_Tree
 			
             //cout  << tab << actualNode->_itemValue << "(" << actualNode->_freq << ")" << endl;
 		}
-        //cout << endl;
+		cout << endl;
 	}
 
-    ItemSupport<T> &headItemSupport() const
+    void printFPTree()
     {
-        return _headItemSupport;
+        cout  << endl << "--------- FP-Tree ---------------" << endl;
+
+        function<void(Node<T> *, int)> fctPrint;
+        fctPrint = [&fctPrint](Node<T> *p_actualNode, int p_level)
+        {
+            string tab;
+            for(int l=0; l<p_level; ++l)
+            {
+                tab += "  ";
+            }
+
+            cout << tab << '-' << p_actualNode->_itemValue << " (freq " << p_actualNode->_freq << ")" << endl;
+            if(p_actualNode && !p_actualNode->_children.empty())
+            {
+                ++p_level;
+                for(Node<T>* node : p_actualNode->_children)
+                {
+                    fctPrint(node, p_level);
+                }
+            }
+        };
+
+        fctPrint(_root, 0);
     }
 
-
-public:
-    Node<T> *root() const
+    void printConditionalPattern()
     {
-        return _root;
+        cout  << endl << "--------- Conditional Pattern (p-Conditional) ---------------" << endl;
+
+        for(Node<T> const& node: _headItemSupport.getItemList())
+        {
+            if(ItemSupport<T>::_minSup)
+            cout << endl << node._itemValue << ": ";
+
+            for(Node<T>* link: node._links)
+            {
+                Node<T>* parent = link->_parent;
+                while(parent && parent != _root)
+                {
+                    cout << parent->_itemValue;
+                    parent = parent->_parent;
+                }
+                cout << ":" << link->_freq << " ";
+            }
+        }
+    }
+
+    void print()
+    {
+        printFPTree();
+
+        printConditionalPattern();
     }
 
 private:
@@ -255,3 +310,4 @@ private:
 };
 
 #endif
+

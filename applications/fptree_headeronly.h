@@ -234,7 +234,7 @@ struct FP_Tree
 			
             //cout  << tab << actualNode->_itemValue << "(" << actualNode->_freq << ")" << endl;
 		}
-        //cout << endl;
+		cout << endl;
 	}
 
     ItemSupport<T> &headItemSupport() const

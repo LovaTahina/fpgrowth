@@ -5,6 +5,59 @@
 using namespace std;
 
 template<typename T>
+void printFPTree(Node<T>* p_root)
+{
+    cout  << endl << "--------- FP-Tree ---------------" << endl;
+
+    function<void(Node<T> *, int)> fctPrint;
+    fctPrint = [&fctPrint](Node<T> *p_actualNode, int p_level)
+    {
+        string tab;
+        for(int l=0; l<p_level; ++l)
+        {
+            tab += "  ";
+        }
+
+        cout << tab << '-' << p_actualNode->_itemValue << " (freq " << p_actualNode->_freq << ")" << endl;
+        if(p_actualNode && !p_actualNode->_children.empty())
+        {
+            ++p_level;
+            for(Node<T>* node : p_actualNode->_children)
+            {
+                fctPrint(node, p_level);
+            }
+        }
+    };
+
+    fctPrint(p_root, 0);
+}
+
+template<typename T>
+void printConditionalPattern(Node<T>* p_root, ItemSupport<T>& p_headItemSupport)
+{
+    cout  << endl << "--------- Conditional Pattern (p-Conditional) ---------------" << endl;
+
+    for(Node<T> const& node: p_headItemSupport.getItemList())
+    {
+        if(ItemSupport<T>::_minSup)
+        {
+            cout << endl << node._itemValue << ": ";
+        }
+
+        for(Node<T>* link: node._links)
+        {
+            Node<T>* parent = link->_parent;
+            while(parent && parent != p_root)
+            {
+                cout << parent->_itemValue;
+                parent = parent->_parent;
+            }
+            cout << ":" << link->_freq << " ";
+        }
+    }
+}
+
+template<typename T>
 void test(vector<vector<T>>& DB, T p_root, int p_minSup)
 {
     ItemSupport<T> itemsupport(p_minSup);
@@ -32,12 +85,13 @@ void test(vector<vector<T>>& DB, T p_root, int p_minSup)
         fptree.construct(item);
     }
 
-    fptree.print();
+    printFPTree<T>(fptree.root());
+    printConditionalPattern<T>(fptree.root(), fptree.headItemSupport());
 }
 
 void test1()
 {
-   cout  << endl << "\t================ [ Test with char database ] ================" << endl;
+   cout  << endl << "\t================ [ Test 1. With char database ] ================" << endl;
 
    vector<vector<char>> DB = {
        {'f','a','c','d','g','i','m','p'},
@@ -52,7 +106,7 @@ void test1()
 
 void test2()
 {
-   cout  << endl << "\t================ [ Test with string database ] ================" << endl;
+   cout  << endl << "\t================ [ Test 2. With string database ] ================" << endl;
 
    vector<vector<string>> DB = {
        {"I1", "I2", "I5"},
